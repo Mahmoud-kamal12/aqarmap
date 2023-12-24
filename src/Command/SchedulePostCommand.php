@@ -18,7 +18,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 )]
 class SchedulePostCommand extends Command
 {
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(EventDispatcherInterface $dispatcher)
     {
@@ -27,7 +27,7 @@ class SchedulePostCommand extends Command
         $this->dispatcher = $dispatcher;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:schedule-posts')
@@ -51,7 +51,5 @@ class SchedulePostCommand extends Command
             $event = $stopwatch->stop('schedule-posts');
             $io->success(sprintf('Dispatched SchedulePostEvent. Elapsed time: %s seconds', $event->getDuration() / 1000));
         }
-
-        return Command::SUCCESS;
     }
 }

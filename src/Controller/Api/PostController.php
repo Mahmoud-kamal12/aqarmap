@@ -52,9 +52,6 @@ class PostController extends AbstractController
     #[Route('/posts/create', name: 'posts_create', methods:['post'] )]
     public function create(ManagerRegistry $doctrine, Request $request): JsonResponse
     {
-        $postPublishedEvent = new SchedulePostEvent();
-        $this->eventDispatcher->dispatch($postPublishedEvent, SchedulePostEvent::class);
-
         try {
             $violations = $this->validator->validate(
                 $request->request->all(),$this->validationRoles());
