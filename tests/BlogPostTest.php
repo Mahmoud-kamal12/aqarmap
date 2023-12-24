@@ -28,7 +28,6 @@ class BlogPostTest extends WebTestCase
             ],
         ]);
         $response = $client->getResponse();
-        dump($response->getStatusCode());
         if ($response->getStatusCode() === 200) {
             $data = $response->toArray();
             return $data['token'];

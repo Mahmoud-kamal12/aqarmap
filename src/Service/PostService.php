@@ -36,7 +36,8 @@ class PostService
             $publish_at = new \DateTime();
             $publish_at = $publish_at->format('Y-m-d H:i:s');
             $post->setPublishAt($publish_at);
-        }else{
+        }
+        else{
             $post->setScheduleDate($schedule_date);
         }
         $post = $this->postRepository->createPost($post);
@@ -87,9 +88,16 @@ class PostService
 
     }
 
+    /**
+     * @throws \Exception
+     */
     public function deletePost($id): array
     {
         if (!empty($post = $this->postRepository->find($id))){
+            $user = $this->tokenStorage->getToken()->getUser();
+            if ($post->getUser() !== $user) {
+                throw new \Exception("You are not allowed to delete this post");
+            }
             return $this->postRepository->deletePost($post);
         }
         throw new \Exception("post id not found");

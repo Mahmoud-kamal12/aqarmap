@@ -53,8 +53,10 @@ class PostController extends AbstractController
     public function create(ManagerRegistry $doctrine, Request $request): JsonResponse
     {
         try {
+
             $violations = $this->validator->validate(
                 $request->request->all(),$this->validationRoles());
+
             if (count($violations) > 0) {
                 return Helper::Response(data: [] ,msg: "complete your data" , status: 500);
             }
@@ -64,6 +66,7 @@ class PostController extends AbstractController
                 $request->request->get('description') ?? '',
                 $request->request->get('schedule_date') ?? null,
             );
+
             return Helper::Response(data:$post,msg: "post created successfully" , status: 200);
         }catch (\Exception $exception ){
             return Helper::Response(data: [] ,msg: "error when create post" , status: 500);
@@ -108,7 +111,7 @@ class PostController extends AbstractController
             $post = $this->postService->deletePost($id);
             return Helper::Response(data:$post,msg: "post deleted successfully" , status: 200);
         }catch (\Exception $exception ){
-            return Helper::Response(data: [] ,msg: "error when create post" , status: 500);
+            return Helper::Response(data: [] ,msg: $exception->getMessage() , status: 500);
         }
     }
 
