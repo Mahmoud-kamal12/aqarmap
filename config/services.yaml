@@ -19,6 +19,12 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    App\EventListener\SchedulePostListener:
+        arguments:
+            $postRepository: '@App\Repository\PostRepository'
+            $entityManager: '@Doctrine\ORM\EntityManagerInterface'
+        tags:
+            - { name: 'kernel.event_listener', event: 'schedule.post', method: 'onSchedulePost' }
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
