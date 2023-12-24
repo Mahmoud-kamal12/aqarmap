@@ -2,9 +2,7 @@
 
 namespace App\Controller\Api;
 
-use App\Dto\PostDto;
-use App\Entity\Post;
-use App\Event\SchedulePostEvent;
+
 use App\Helper\Helper;
 use App\Service\PostService;
 use Doctrine\Persistence\ManagerRegistry;

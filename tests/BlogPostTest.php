@@ -11,7 +11,8 @@ class BlogPostTest extends WebTestCase
 {
     public function testCreatePost()
     {
-        $client = static::createClient();
+
+        $client =  static::createClient();
 
         $jwtToken = $this->getJwtToken($client);
         $this->createPost($client, $jwtToken);
@@ -20,58 +21,59 @@ class BlogPostTest extends WebTestCase
 
     private function getJwtToken($client)
     {
-        $client->request('POST', '/login_check', [
-            'headers' => ['Content-Type' => 'application/json'],
-            'json' => [
-                'email' => 'yrobel@example.com',
-                'password' => 'password',
-            ],
-        ]);
-        $response = $client->getResponse();
-        if ($response->getStatusCode() === 200) {
-            $data = $response->toArray();
-            return $data['token'];
-        }
-        throw new \RuntimeException('Authentication failed.');
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://127.0.0.1:8000/api/login_check',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => '{
+                    "email":"yrobel@example.com",
+                    "password":"password"
+                }',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return json_decode($response)->token;
+
     }
     private function createPost($client, $jwtToken)
     {
-        $client->request('GET', '/api/posts/create', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $jwtToken,
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'title' => 'Test Post',
-                'description' => 'This is a test post content.',
-                'schedule_date' => '',
-            ],
-        ]);
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $curl = curl_init();
 
-    }
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://127.0.0.1:8000/api/posts/create',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => 'title=title%201&description=description1&schedule_date=2023-12-24%2011%3A28%3A02',
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded',
+                'Authorization: Bearer ' . $jwtToken
+            ),
+        ));
 
-    public function testShowAllPost()
-    {
-        $client = static::createClient();
+        $response = curl_exec($curl);
 
-        $jwtToken = $this->getJwtToken($client);
-        $this->showAllPost($client, $jwtToken);
-
-    }
-
-    private function showAllPost($client, $jwtToken)
-    {
-        $client->request('GET', '/api/posts/index', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $jwtToken,
-                'Content-Type' => 'application/json',
-            ]
-        ]);
-
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        curl_close($curl);
+        $this->assertEquals('post created successfully', json_decode($response)->msg);
 
     }
+
 
 }

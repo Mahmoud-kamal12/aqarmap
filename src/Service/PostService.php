@@ -3,9 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Post;
-use App\Event\SchedulePostEvent;
 use App\Repository\PostRepository;
-use mysql_xdevapi\Exception;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
