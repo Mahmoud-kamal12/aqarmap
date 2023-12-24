@@ -12,16 +12,15 @@ class BlogPostTest extends WebTestCase
     public function testCreatePost()
     {
 
-        $client =  static::createClient();
-
-        $jwtToken = $this->getJwtToken($client);
-        $this->createPost($client, $jwtToken);
+        $jwtToken = $this->getJwtToken();
+        $this->createPost($jwtToken);
 
     }
 
-    private function getJwtToken($client)
+    private function getJwtToken()
     {
         $curl = curl_init();
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'http://127.0.0.1:8000/api/login_check',
             CURLOPT_RETURNTRANSFER => true,
@@ -47,7 +46,7 @@ class BlogPostTest extends WebTestCase
         return json_decode($response)->token;
 
     }
-    private function createPost($client, $jwtToken)
+    private function createPost($jwtToken)
     {
 
         $curl = curl_init();
